@@ -50,7 +50,6 @@ def set_cache_wallpaper(filename: str):
 
 
 def set_wallpaper(filepath: str):
-    print("set wallpaper " + str(filepath))
     command: str = """
     osascript -e "tell application \\"Finder\\" to set desktop picture to POSIX file \\"{}\\""
     """.format(filepath)
@@ -75,7 +74,6 @@ def bounds_of_window() -> Tuple[int, int]:
 
 
 def execute_command(command: str):
-    print(command)
     os.system(command)
 
 
