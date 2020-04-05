@@ -5,12 +5,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageColor
 from . import colors, command, helper
 
 # fetch
-def fetch_image(size: Tuple[int, int], color:Tuple[int, int, int]) -> Image:
-    # origin_file = os.path.abspath(os.path.dirname(__file__))
-    # f = os.path.join(origin_file, "blank.png")
-    # print(f)
-    # image = Image.open(f)
-    image = Image.new("RGB", size, color)
+def fetch_image(size: Tuple[int, int], color: Tuple[int, int, int]) -> Image:
+    image = Image.new("RGB", size, tuple(color))
     return image
 
 # color
@@ -40,7 +36,6 @@ def render_text(
     font = ImageFont.truetype(
         font=font or "grunge_serifia.ttf", size=size or 100)
     draw = ImageDraw.Draw(img)
-    print("render text " + str(text))
     draw.text(origin, text, color, font=font)
     return img
 
@@ -49,6 +44,5 @@ def render_text(
 def cache_image(image: Image, file_name: str) -> ImageDraw:
     temp = helper.get_cache_dir()
     path = os.path.join(temp, file_name)
-    print("cache image to " + str(path))
     image.save(path)
     return image

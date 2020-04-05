@@ -18,7 +18,7 @@ def fetch_font_list() -> List[FontSpec]:
     font_list: List[FontSpec] = []
     for f in result:
         path = f.strip().split(":")[0]
-        name = path.split(os.pathsep)[-1].lower()
+        name = path.split("/")[-1].lower()
         font_list.append(FontSpec(path, name))
     return font_list
 

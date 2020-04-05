@@ -63,27 +63,40 @@ def parser_main(**kwargs):
     if args.clean:
         clean_cache_dir = args.clean
     
-    font = command.fetch_font(font_name=args.font)
-    font_size = int(args.size or 140)
-    color = random.choice(colors.load_colors())
-    bg_color = color.RGB
-    if args.rgb:
-        bg_color = (int(i) for i in args.rgb.split(","))
-    # diaplay content
-    content: str = font.name
-    if args.content:
-        content = content.join(args.content)
-    bounds = command.bounds_of_window()
+    render_content: str
+    background_color_rgb: Tuple[int, int, int]
+    font_name: str
+    font_size: int
+    font_path: str
+    payload_size: Tuple[int, int]
 
-    img = render.fetch_image(bounds, bg_color)
+    font = command.fetch_font(font_name=args.font)
+    color = random.choice(colors.load_colors())
+
+    font_size = int(args.size or 140)
+    font_path = font.path
     
-    f = str("{}.png".format(uuid.uuid4().hex))
-    ori = (random.randint(0, bounds[0]), random.randint(0, bounds[1]))
-    origin = helper.safe_origin(ori, bounds, content, font_size)
+    if args.rgb:
+        background_color_rgb = (int(i) for i in args.rgb.split(","))
+        content = ""
+    else:
+        background_color_rgb = color.RGB
+        render_content = color.name
+
+    if args.content:
+        render_content = content.join(args.content)
+
+    payload_size = command.bounds_of_window()
+
+    img = render.fetch_image(payload_size, background_color_rgb)
+    
+    temp_filename = str("{}.png".format(uuid.uuid4().hex))
+    ori = (random.randint(0, payload_size[0]), random.randint(0, payload_size[1]))
+    origin = helper.safe_origin(ori, payload_size, render_content, font_size)
     rgb = (255, 255, 255)
-    img = render.render_text(img, content, origin, rgb, font.path, font_size)
-    img = render.cache_image(img, f)
-    command.set_cache_wallpaper(f)
+    img = render.render_text(img, render_content, origin, rgb, font_path, font_size)
+    img = render.cache_image(img, temp_filename)
+    command.set_cache_wallpaper(temp_filename)
     
     
 
