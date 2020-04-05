@@ -68,7 +68,7 @@ def parser_main(**kwargs):
     color = random.choice(colors.load_colors())
     bg_color = color.RGB
     if args.rgb:
-        bg_color = colors.ColorItem(None, (int(i) for i in args.rgb.split(",")), "", "自定义色", "zidingyi")
+        bg_color = (int(i) for i in args.rgb.split(","))
     # diaplay content
     content: str = font.name
     if args.content:

@@ -5,12 +5,12 @@ from PIL import Image, ImageDraw, ImageFont, ImageColor
 from . import colors, command, helper
 
 # fetch
-def fetch_image(size: Tuple[int, int], color: colors.ColorItem) -> Image:
+def fetch_image(size: Tuple[int, int], color:Tuple[int, int, int]) -> Image:
     # origin_file = os.path.abspath(os.path.dirname(__file__))
     # f = os.path.join(origin_file, "blank.png")
     # print(f)
     # image = Image.open(f)
-    image = Image.new("RGB", size, tuple(color.RGB))
+    image = Image.new("RGB", size, color)
     return image
 
 # color
