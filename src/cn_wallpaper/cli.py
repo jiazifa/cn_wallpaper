@@ -11,7 +11,8 @@ import argparse
 import logging, random
 from argparse import ArgumentParser
 from typing import Tuple, Any, Dict, List, Callable, Optional, Union
-from cn_wallpaper import colors, command, render
+from cn_wallpaper import colors, command, render, helper
+
 
 def parser_main(**kwargs):
     logging.basicConfig(format="[%(levelname)s] %(message)s")
@@ -22,25 +23,62 @@ def parser_main(**kwargs):
         description="china colors wallpaper"
     )
     parser.add_argument("-v", "--version", action="version")
-    # 设置图片桌面
-    parser.add_argument("-f", "--file", action="store_true")
-     # 文件或者文件夹路径
-    parser.add_argument("file_or_direct", nargs="*")
+    # 后台运行选项
+    background_grp = parser.add_argument_group("Background Option")
+    background_grp.add_argument(
+        "-d",
+        "--background",
+        action="store_true",
+        help="application run as background task"
+    )
+    background_grp.add_argument(
+        "-c",
+        "--clean",
+        action="store_true",
+        help="clean files after set wallpaper"
+    )
+
+    # 字体选项
+    font_group = parser.add_argument_group("Font Option")
+    font_group.add_argument(
+        "-f",
+        "--font",
+        help="path for font"
+    )
+    font_group.add_argument(
+        "-s",
+        "--size",
+        help="font size"
+    )
+    font_group.add_argument(
+        "--rgb",
+        help="rgb color"
+    )
+
+    parser.add_argument("content", nargs="*", help=argparse.SUPPRESS)
 
     args = parser.parse_args()
-    # filepath = args.file_or_direct[0]
-    # if args.file:
-    #     common.set_wallpaper(filepath)
-    # else:
-    #     common.set_wallpaper_dir(filepath)
+
+    # parser
+    if args.clean:
+        clean_cache_dir = args.clean
+
+    bounds = command.bounds_of_window()
     color = random.choice(colors.load_colors())
-    img = render.fetch_image(command.bounds_of_window(), color)
+    img = render.fetch_image(bounds, color)
     
-    font = command.fetch_font()
+    font = command.fetch_font(font_name=args.font)
+    font_size = int(args.size or 140)
+    # diaplay content
+    content: str = font.name
+    if args.content:
+        content = content.join(args.content)
+    
     f = str("{}.png".format(uuid.uuid4().hex))
+    ori = (random.randint(0, bounds[0]), random.randint(0, bounds[1]))
+    origin = helper.safe_origin(ori, bounds, content, font_size)
     rgb = (255, 255, 255)
-    img = render.render_text(img, color.name, (200, 200), rgb, font.path, 140)
-    img = render.render_text(img, color.pinyin, (200, 360), rgb, font.path, 50)
+    img = render.render_text(img, content, origin, rgb, font.path, font_size)
     img = render.cache_image(img, f)
     command.set_cache_wallpaper(f)
     

@@ -5,7 +5,6 @@ from PIL import Image, ImageDraw, ImageFont, ImageColor
 from . import colors, command, helper
 
 # fetch
-
 def fetch_image(size: Tuple[int, int], color: colors.ColorItem) -> Image:
     # origin_file = os.path.abspath(os.path.dirname(__file__))
     # f = os.path.join(origin_file, "blank.png")

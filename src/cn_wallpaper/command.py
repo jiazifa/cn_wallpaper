@@ -1,5 +1,6 @@
 
-import os, re
+import os
+import re
 import random
 import subprocess
 from collections import namedtuple
@@ -7,6 +8,7 @@ from typing import List, Tuple, Union
 from . import helper
 
 FontSpec = namedtuple("FontSpec", ["path", "name"])
+
 
 def fetch_font_list() -> List[FontSpec]:
     command = """
@@ -20,22 +22,32 @@ def fetch_font_list() -> List[FontSpec]:
         font_list.append(FontSpec(path, name))
     return font_list
 
-def fetch_font(fonts: Union[None, List[FontSpec]] = None) -> FontSpec:
+
+def fetch_font(fonts: Union[None, List[FontSpec]] = None, font_name: Union[None, str] = None) -> FontSpec:
     font_list = fonts or fetch_font_list()
-    return random.choice(font_list)
+    font = random.choice(font_list)
+    if font_name:
+        fs = list(filter(lambda font: font.name == font_name, font_list))
+        if fs and len(fs) > 0:
+            font = fs[0]
+    return font
 
 
 def set_wallpaper_dir(dir: str):
-    print(os.getcwd())
     all_files: list = []
     for file in os.listdir(dir):
         all_files.append(os.path.join(dir, file))
     file = random.choice(all_files)
     set_wallpaper(file)
 
+
 def set_cache_wallpaper(filename: str):
     path = helper.get_file_from_cache(filename)
     set_wallpaper(path)
+    
+    if helper.clean_cache_dir:
+        helper.clean_cache_except(filename)
+
 
 def set_wallpaper(filepath: str):
     print("set wallpaper " + str(filepath))
@@ -43,6 +55,7 @@ def set_wallpaper(filepath: str):
     osascript -e "tell application \\"Finder\\" to set desktop picture to POSIX file \\"{}\\""
     """.format(filepath)
     execute_command(command)
+
 
 def bounds_of_window() -> Tuple[int, int]:
     # command = """
@@ -56,27 +69,27 @@ def bounds_of_window() -> Tuple[int, int]:
     for r in result:
         if r.startswith("Main Display"):
             break
-        size = tuple(map(lambda i: int(i), filter(None, re.findall(r'\d*', r))))
+        size = tuple(map(lambda i: int(i), filter(
+            None, re.findall(r'\d*', r))))
     return (size[0], size[1])
-
 
 
 def execute_command(command: str):
     print(command)
     os.system(command)
 
+
 def execute_want_one_line(command: str) -> str:
     r = execute_want_return_value(command)
     return r[0]
+
 
 def execute_want_return_value(command: str) -> List[str]:
     res = subprocess.Popen(
         command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
     out = res.stdout
-    if not out: return []
+    if not out:
+        return []
     result = out.readlines()
     return list(map(lambda r: str(r, encoding="utf-8").strip(), result))
 
-if __name__ == "__main__":
-    r = bounds_of_window()
-    print(r)
