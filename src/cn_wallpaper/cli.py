@@ -52,7 +52,7 @@ def parser_main(**kwargs):
     )
     font_group.add_argument(
         "--rgb",
-        help="rgb color"
+        help="rgb color as 255,255,255"
     )
 
     parser.add_argument("content", nargs="*", help=argparse.SUPPRESS)
@@ -62,17 +62,20 @@ def parser_main(**kwargs):
     # parser
     if args.clean:
         clean_cache_dir = args.clean
-
-    bounds = command.bounds_of_window()
-    color = random.choice(colors.load_colors())
-    img = render.fetch_image(bounds, color)
     
     font = command.fetch_font(font_name=args.font)
     font_size = int(args.size or 140)
+    color = random.choice(colors.load_colors())
+    bg_color = color.RGB
+    if args.rgb:
+        bg_color = colors.ColorItem(None, (int(i) for i in args.rgb.split(",")), "", "自定义色", "zidingyi")
     # diaplay content
     content: str = font.name
     if args.content:
         content = content.join(args.content)
+    bounds = command.bounds_of_window()
+
+    img = render.fetch_image(bounds, bg_color)
     
     f = str("{}.png".format(uuid.uuid4().hex))
     ori = (random.randint(0, bounds[0]), random.randint(0, bounds[1]))
