@@ -1,5 +1,5 @@
 
-import os
+import os, sys
 import logging
 from typing import Tuple
 
@@ -27,6 +27,9 @@ def get_file_from_cache(file: str) -> str:
 
 def clean_cache_except(path: str):
     dir = get_cache_dir()
+    if not path:
+        os.rmdir(dir)
+        return
     for f in os.listdir(dir):
         if f == path:
             continue
@@ -53,3 +56,14 @@ def safe_origin(
     target_x = min(max(0, want_origin[0]), max_size[0] - width)
     target_y = min(max(0, want_origin[1]), max_size[1] - height)
     return (target_x, target_y)
+
+
+# log
+def sprint(text: str) -> str:
+    return text
+
+def print_err(text: str):
+    sys.stderr.write(sprint(text) + "\n")
+
+def print_log(text: str):
+    sys.stdout.write(sprint(text) + "\n")

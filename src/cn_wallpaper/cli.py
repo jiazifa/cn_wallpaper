@@ -61,7 +61,9 @@ def parser_main(**kwargs):
 
     # parser
     if args.clean:
-        clean_cache_dir = args.clean
+        helper.clean_cache_except("")
+        helper.print_log("Cache cleared")
+        return
     
     render_content: str
     background_color_rgb: Tuple[int, int, int]
@@ -75,7 +77,7 @@ def parser_main(**kwargs):
 
     font_size = int(args.size or 140)
     font_path = font.path
-    
+
     if args.rgb:
         background_color_rgb = (int(i) for i in args.rgb.split(","))
         content = ""
