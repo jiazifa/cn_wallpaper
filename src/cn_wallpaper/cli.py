@@ -41,6 +41,10 @@ def parser_main(**kwargs):
     # 字体选项
     font_group = parser.add_argument_group("Font Option")
     font_group.add_argument(
+        "--direction",
+        help="direction of render content"
+    )
+    font_group.add_argument(
         "-f",
         "--font",
         help="path for font"
@@ -53,6 +57,13 @@ def parser_main(**kwargs):
     font_group.add_argument(
         "--rgb",
         help="rgb color as 255,255,255"
+    )
+
+    content_group = parser.add_argument_group("Content Option")
+    content_group.add_argument(
+        "-i",
+        "--input",
+        help="input file for render content"
     )
 
     parser.add_argument("content", nargs="*", help=argparse.SUPPRESS)
@@ -70,6 +81,7 @@ def parser_main(**kwargs):
     font_name: str
     font_size: int
     font_path: str
+    font_direction: Union[None, str] = args.direction
     payload_size: Tuple[int, int]
 
     font = command.fetch_font(font_name=args.font)
@@ -77,6 +89,7 @@ def parser_main(**kwargs):
 
     font_size = int(args.size or 140)
     font_path = font.path
+    display_font: render.ImageFont = render.fetch_font(font_path, font_size)
 
     if args.rgb:
         background_color_rgb = (int(i) for i in args.rgb.split(","))
@@ -86,7 +99,12 @@ def parser_main(**kwargs):
         render_content = color.name
 
     if args.content:
+        print(args.content)
         render_content = render_content.join(args.content)
+        print(render_content)
+    elif args.input:
+        with open(args.input) as f:
+            render_content = f.read()
 
     payload_size = command.bounds_of_window()
 
@@ -94,13 +112,12 @@ def parser_main(**kwargs):
     
     temp_filename = str("{}.png".format(uuid.uuid4().hex))
     ori = (random.randint(0, payload_size[0]), random.randint(0, payload_size[1]))
-    origin = helper.safe_origin(ori, payload_size, render_content, font_size)
+    font_bounds = render.size_of_text(img, render_content, display_font, font_direction)
+    origin = helper.safe_origin(ori, payload_size, font_bounds)
     rgb = (255, 255, 255)
-    img = render.render_text(img, render_content, origin, rgb, font_path, font_size)
+    img = render.render_text(img, render_content, origin, rgb, display_font)
     img = render.cache_image(img, temp_filename)
     command.set_cache_wallpaper(temp_filename)
-    
-    
 
 
 def main(**kwargs):

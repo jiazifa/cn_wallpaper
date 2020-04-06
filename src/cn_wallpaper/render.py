@@ -11,7 +11,6 @@ def fetch_image(size: Tuple[int, int], color: Tuple[int, int, int]) -> Image:
 
 # color
 
-
 def render_color(image: Image, color: colors.ColorItem) -> Image:
     img = image.copy().convert("RGB")
     size = img.size
@@ -22,21 +21,31 @@ def render_color(image: Image, color: colors.ColorItem) -> Image:
     return img
 
 # text
+def size_of_text(
+    image: Image, 
+    text: str, 
+    font: ImageFont,
+    direction: Union[None, str]=None
+) -> Tuple[int, int]:
+    draw = ImageDraw.Draw(image)
+    size = draw.multiline_textsize(text, font) #, direction=direction or "ltr")
+    return size
 
+def fetch_font(font_path: str, font_size: int) -> ImageFont:
+    return ImageFont.truetype(font=font_path, size=font_size, layout_engine=ImageFont.LAYOUT_RAQM)
 
 def render_text(
     image: Image,
     text: str,
     origin: Tuple[int, int],
     color: Tuple[int, int, int] = (0, 0, 0),
-    font: Union[str, None] = None,
-    size: Union[int, None] = None
+    font = None
 ) -> Image:
     img = image.copy().convert("RGB")
-    font = ImageFont.truetype(
-        font=font or "grunge_serifia.ttf", size=size or 100)
+    render_font = font or ImageFont.truetype(
+        font=font)
     draw = ImageDraw.Draw(img)
-    draw.text(origin, text, color, font=font)
+    draw.multiline_text(origin, text, color, font=font)
     return img
 
 

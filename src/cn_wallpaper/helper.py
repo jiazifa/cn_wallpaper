@@ -37,25 +37,13 @@ def clean_cache_except(path: str):
 def safe_origin(
     want_origin: Tuple[int, int], 
     max_size: Tuple[int, int], 
-    content: str, 
-    font_size: int
+    content_size: Tuple[int, int], 
 ) -> Tuple[int, int]:
     # width, height
-
-    width = font_size
-    height = font_size
-    for c in content:
-        w: int = 0
-        if c.isalpha:
-            w += int(font_size / 2)
-        else:
-            w += font_size
-        width += w
-        width += int(w/2)
     target_x: int
     target_y: int
-    target_x = min(max(0, want_origin[0]), max_size[0] - width)
-    target_y = min(max(0, want_origin[1]), max_size[1] - height)
+    target_x = min(max(100, want_origin[0]), max_size[0] - content_size[0] - 100)
+    target_y = min(max(100, want_origin[1]), max_size[1] - content_size[1] - 100)
     return (target_x, target_y)
 
 
