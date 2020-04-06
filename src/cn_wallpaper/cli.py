@@ -86,7 +86,7 @@ def parser_main(**kwargs):
         render_content = color.name
 
     if args.content:
-        render_content = content.join(args.content)
+        render_content = render_content.join(args.content)
 
     payload_size = command.bounds_of_window()
 

@@ -27,13 +27,11 @@ def get_file_from_cache(file: str) -> str:
 
 def clean_cache_except(path: str):
     dir = get_cache_dir()
-    if not path:
-        os.rmdir(dir)
-        return
     for f in os.listdir(dir):
         if f == path:
             continue
         os.remove(os.path.join(dir, f))
+    if not path: os.rmdir(dir)
 
 
 def safe_origin(
