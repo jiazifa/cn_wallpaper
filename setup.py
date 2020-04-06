@@ -17,6 +17,7 @@ A Tool
 """
 REQUIRES_PYTHON = ">3.5"
 REQUIRED: list = [
+    "pillow"
 ]
 
 setup(

@@ -44,13 +44,16 @@ def safe_origin(
 ) -> Tuple[int, int]:
     # width, height
 
-    width = 0
+    width = font_size
     height = font_size
     for c in content:
+        w: int = 0
         if c.isalpha:
-            width += int(font_size / 2)
+            w += int(font_size / 2)
         else:
-            width += font_size
+            w += font_size
+        width += w
+        width += int(w/2)
     target_x: int
     target_y: int
     target_x = min(max(0, want_origin[0]), max_size[0] - width)
