@@ -9,6 +9,17 @@ from . import helper
 
 FontSpec = namedtuple("FontSpec", ["path", "name"])
 
+def get_pids() -> List[int]:
+    command = """
+    ps | cut -d ' ' -f 2
+    """
+    result = execute_want_return_value(command)
+    rs = []
+    for r in result:
+        if len(r) == 0:
+            continue
+        rs.append(int(r))
+    return list(set(rs))
 
 def fetch_font_list() -> List[FontSpec]:
     command = """

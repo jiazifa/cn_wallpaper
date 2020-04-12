@@ -1,12 +1,25 @@
 
 import os, sys
 import logging
-from typing import Tuple
+from typing import Tuple, Union
 
 # config Option
 clean_cache_dir: bool = False
 
 # helpers
+
+def cache_pid():
+    pid = os.getpid()
+    with open('pid.log', 'w') as f:
+        f.write(str(pid))
+
+def query_pid() -> Union[None, int]:
+    fn = 'pid.log'
+    if not os.path.exists(fn):
+        return None
+    with open(fn, 'r') as f:
+        return int(f.read())
+
 
 
 def get_home_dir() -> str:
